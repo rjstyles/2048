@@ -1,10 +1,108 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import "../styles/Board.scss";
 import Cell from "./Cell";
 
 export default function Board({ dimension }) {
 	const [grid, setGrid] = useState(null);
+
+	let addRandomCell = useCallback(
+		(grid) => {
+			// add new number randomly
+			let randomRow = Math.floor(Math.random() * dimension);
+			let randomCol = Math.floor(Math.random() * dimension);
+
+			do {
+				randomRow = Math.floor(Math.random() * dimension);
+				randomCol = Math.floor(Math.random() * dimension);
+			} while (grid[randomRow][randomCol] !== null);
+
+			grid[randomRow][randomCol] = 2;
+		},
+		[dimension]
+	);
+
+	const handleArrowUp = useCallback(() => {
+		var newGrid = grid.map((row) => row.slice());
+
+		for (let col = 0; col < dimension; col++) {
+			let tmpColToSlide = [];
+			for (let row = 0; row < dimension; row++) {
+				tmpColToSlide.push(grid[row][col]);
+			}
+			let colAfterSlide = slide(tmpColToSlide);
+			for (let row = 0; row < dimension; row++) {
+				newGrid[row][col] = colAfterSlide[row];
+			}
+		}
+
+		addRandomCell(newGrid);
+		setGrid(newGrid);
+	}, [addRandomCell, dimension, grid]);
+
+	const handleArrowDown = useCallback(() => {
+		var newGrid = grid.map((row) => row.slice());
+
+		for (let col = 0; col < dimension; col++) {
+			let tmpColToSlide = [];
+			for (let row = dimension - 1; row >= 0; row--) {
+				tmpColToSlide.push(grid[row][col]);
+			}
+			let colAfterSlide = slide(tmpColToSlide);
+
+			for (let row = 0; row < dimension; row++) {
+				newGrid[dimension - row - 1][col] = colAfterSlide[row];
+			}
+		}
+
+		addRandomCell(newGrid);
+		setGrid(newGrid);
+	}, [addRandomCell, dimension, grid]);
+
+	const handleArrowLeft = useCallback(() => {
+		var newGrid = grid.map((row) => row.slice());
+
+		grid.forEach((row, i) => {
+			let rowAfterSlide = slide(row);
+			newGrid[i] = rowAfterSlide;
+		});
+
+		addRandomCell(newGrid);
+		setGrid(newGrid);
+	}, [addRandomCell, grid]);
+
+	const handleArrowRight = useCallback(() => {
+		var newGrid = grid.map((row) => row.slice());
+
+		grid.forEach((row, i) => {
+			let rowAfterSlide = slide(row.reverse()).reverse();
+			newGrid[i] = rowAfterSlide;
+		});
+
+		addRandomCell(newGrid);
+		setGrid(newGrid);
+	}, [addRandomCell, grid]);
+
+	const onKeyPress = useCallback(
+		({ key }) => {
+			switch (key) {
+				case "ArrowUp":
+					handleArrowUp();
+					break;
+				case "ArrowDown":
+					handleArrowDown();
+					break;
+				case "ArrowLeft":
+					handleArrowLeft();
+					break;
+				case "ArrowRight":
+					handleArrowRight();
+					break;
+				default:
+			}
+		},
+		[handleArrowDown, handleArrowLeft, handleArrowRight, handleArrowUp]
+	);
 
 	useEffect(() => {
 		let newGrid = [];
@@ -19,7 +117,7 @@ export default function Board({ dimension }) {
 		addRandomCell(newGrid);
 		addRandomCell(newGrid);
 		setGrid(newGrid);
-	}, [dimension]);
+	}, [dimension, addRandomCell]);
 
 	useEffect(() => {
 		// initiate the event handler
@@ -28,38 +126,7 @@ export default function Board({ dimension }) {
 		return function cleanup() {
 			window.removeEventListener("keydown", onKeyPress);
 		};
-	}, [grid]);
-
-	function onKeyPress({ key }) {
-		switch (key) {
-			case "ArrowUp":
-				handleArrowUp();
-				break;
-			case "ArrowDown":
-				handleArrowDown();
-				break;
-			case "ArrowLeft":
-				handleArrowLeft();
-				break;
-			case "ArrowRight":
-				handleArrowRight();
-				break;
-			default:
-		}
-	}
-
-	function addRandomCell(grid) {
-		// add new number randomly
-		let randomRow = Math.floor(Math.random() * dimension);
-		let randomCol = Math.floor(Math.random() * dimension);
-
-		do {
-			randomRow = Math.floor(Math.random() * dimension);
-			randomCol = Math.floor(Math.random() * dimension);
-		} while (grid[randomRow][randomCol] !== null);
-
-		grid[randomRow][randomCol] = 2;
-	}
+	}, [grid, onKeyPress]);
 
 	function slide(arr) {
 		let stack = [];
@@ -81,65 +148,6 @@ export default function Board({ dimension }) {
 		while (stack.length < arr.length) stack.push(null);
 
 		return stack;
-	}
-
-	function handleArrowUp() {
-		var newGrid = grid.map((row) => row.slice());
-
-		for (let col = 0; col < dimension; col++) {
-			let tmpColToSlide = [];
-			for (let row = 0; row < dimension; row++) {
-				tmpColToSlide.push(grid[row][col]);
-			}
-			let colAfterSlide = slide(tmpColToSlide);
-			for (let row = 0; row < dimension; row++) {
-				newGrid[row][col] = colAfterSlide[row];
-			}
-		}
-
-		addRandomCell(newGrid);
-		setGrid(newGrid);
-	}
-
-	function handleArrowDown() {
-		var newGrid = grid.map((row) => row.slice());
-
-		for (let col = 0; col < dimension; col++) {
-			let tmpColToSlide = [];
-			for (let row = dimension - 1; row >= 0; row--) {
-				tmpColToSlide.push(grid[row][col]);
-			}
-			let colAfterSlide = slide(tmpColToSlide);
-
-			for (let row = 0; row < dimension; row++) {
-				newGrid[dimension - row - 1][col] = colAfterSlide[row];
-			}
-		}
-
-		addRandomCell(newGrid);
-		setGrid(newGrid);
-	}
-	function handleArrowLeft() {
-		var newGrid = grid.map((row) => row.slice());
-
-		grid.forEach((row, i) => {
-			let rowAfterSlide = slide(row);
-			newGrid[i] = rowAfterSlide;
-		});
-
-		addRandomCell(newGrid);
-		setGrid(newGrid);
-	}
-	function handleArrowRight() {
-		var newGrid = grid.map((row) => row.slice());
-
-		grid.forEach((row, i) => {
-			let rowAfterSlide = slide(row.reverse()).reverse();
-			newGrid[i] = rowAfterSlide;
-		});
-
-		addRandomCell(newGrid);
-		setGrid(newGrid);
 	}
 
 	if (grid === null) return <div>Loading...</div>;
