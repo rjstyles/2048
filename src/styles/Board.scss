@@ -1,0 +1,93 @@
+@import "./variables";
+
+@mixin flexCenter($justify_content) {
+	display: flex;
+	justify-content: $justify_content;
+	align-content: space-evenly;
+}
+
+.board {
+	@include flexCenter(space-evenly);
+	border-radius: 5px;
+	flex-wrap: wrap;
+	width: 450px;
+	height: 450px;
+	background-color: $background_color;
+}
+
+.board__cell {
+	@include flexCenter(center);
+	font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+	color: $text_color_dark;
+	font-weight: bold;
+	line-height: 100px;
+	font-size: $font_size_cell_large;
+	width: 100px;
+	height: 100px;
+	border-radius: 5px;
+	align-items: center;
+	background-color: $cell_color;
+	//margin: 10px 10px 0px 0px;
+}
+
+.board__cell--2 {
+	@extend .board__cell;
+	background-color: $background_color_2;
+}
+
+.board__cell--4 {
+	@extend .board__cell;
+	background-color: $background_color_4;
+}
+.board__cell--8 {
+	@extend .board__cell;
+	color: $text_color_light;
+	background-color: $background_color_8;
+}
+.board__cell--16 {
+	@extend .board__cell;
+	color: $text_color_light;
+	background-color: $background_color_16;
+}
+.board__cell--32 {
+	@extend .board__cell;
+	color: $text_color_light;
+	background-color: $background_color_32;
+}
+.board__cell--64 {
+	@extend .board__cell;
+	color: $text_color_light;
+	background-color: $background_color_64;
+}
+.board__cell--128 {
+	@extend .board__cell;
+	color: $text_color_light;
+	font-size: $font_size_cell_small;
+	background-color: $background_color_128;
+}
+.board__cell--256 {
+	@extend .board__cell;
+	color: $text_color_light;
+	font-size: $font_size_cell_small;
+	background-color: $background_color_256;
+}
+.board__cell--512 {
+	@extend .board__cell;
+	font-size: $font_size_cell_small;
+	background-color: $background_color_512;
+}
+.board__cell--1024 {
+	@extend .board__cell;
+	font-size: $font_size_cell_small;
+	background-color: $background_color_1024;
+}
+.board__cell--2048 {
+	@extend .board__cell;
+	font-size: $font_size_cell_small;
+	background-color: $background_color_2048;
+}
+.board__cell--other {
+	@extend .board__cell;
+	font-size: $font_size_cell_small;
+	background-color: $background_color_other;
+}

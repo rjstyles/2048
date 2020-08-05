@@ -1,8 +1,15 @@
 import React from "react";
-import "./App.css";
+import "./styles/App.scss";
+import Board from "./components/Board";
 
 function App() {
-	return <div className="App">App</div>;
+	let dimension = 4;
+
+	return (
+		<div className="app">
+			<Board dimension={dimension} />
+		</div>
+	);
 }
 
 export default App;
