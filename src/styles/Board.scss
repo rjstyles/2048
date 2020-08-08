@@ -30,6 +30,22 @@
 	//margin: 10px 10px 0px 0px;
 }
 
+@keyframes newCellAnimation {
+	from {
+		opacity: 0;
+		transform: scale(0.5);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+.board__cell__new {
+	@extend .board__cell;
+	animation: newCellAnimation 0.25s linear 0s;
+}
+
 .board__cell--2 {
 	@extend .board__cell;
 	background-color: $background_color_2;

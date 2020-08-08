@@ -6,9 +6,9 @@ import Cell from "./Cell";
 export default function Board({ dimension }) {
 	const [grid, setGrid] = useState(null);
 
-	let addRandomCell = useCallback((grid) => {
+	let addRandomCell = useCallback((grid, newCell = false) => {
 		//check if any space left on the board
-		if (!grid.some((row) => row.some((cell) => cell === null))) return;
+		if (!grid.some((row) => row.some((cell) => cell.num === null))) return;
 
 		// add new number randomly
 		let randomRow = Math.floor(Math.random() * grid.length);
@@ -17,9 +17,9 @@ export default function Board({ dimension }) {
 		do {
 			randomRow = Math.floor(Math.random() * grid.length);
 			randomCol = Math.floor(Math.random() * grid.length);
-		} while (grid[randomRow][randomCol] !== null);
+		} while (grid[randomRow][randomCol].num !== null);
 
-		grid[randomRow][randomCol] = 2;
+		grid[randomRow][randomCol] = { num: 2, newCell };
 	}, []);
 
 	const handleArrowUp = useCallback((grid) => {
@@ -72,7 +72,16 @@ export default function Board({ dimension }) {
 			)
 				return;
 
-			var newGrid = grid.map((row) => row.slice());
+			var newGrid = grid.map((row) => {
+				return row.map((cell) => {
+					return cell
+						? {
+								num: cell.num,
+								newCell: false,
+						  }
+						: null;
+				});
+			});
 
 			switch (key) {
 				case "ArrowUp":
@@ -90,7 +99,7 @@ export default function Board({ dimension }) {
 				default:
 			}
 
-			addRandomCell(newGrid);
+			addRandomCell(newGrid, true);
 			setGrid(newGrid);
 		},
 		[
@@ -107,7 +116,7 @@ export default function Board({ dimension }) {
 		let newGrid = [];
 		Array.from(Array(dimension)).forEach((r, i) => {
 			let row = Array.from(Array(dimension)).map((c, j) => {
-				return null;
+				return { num: null, newCell: false };
 			});
 			newGrid.push(row);
 		});
@@ -131,21 +140,25 @@ export default function Board({ dimension }) {
 	function slide(arr) {
 		let stack = [];
 
-		arr.forEach((num) => {
-			if (num === null) return;
+		arr.forEach((cell) => {
+			if (cell.num === null) return;
 
 			if (stack.length === 0) {
-				stack.push(num);
+				stack.push({ ...cell });
 			} else {
-				if (stack[stack.length - 1] === num) {
-					stack.push(stack.pop() + num);
+				if (stack[stack.length - 1].num === cell.num) {
+					stack.push({
+						num: stack.pop().num + cell.num,
+						newCell: false,
+					});
 				} else {
-					stack.push(num);
+					stack.push({ ...cell });
 				}
 			}
 		});
 
-		while (stack.length < arr.length) stack.push(null);
+		while (stack.length < arr.length)
+			stack.push({ num: null, newCell: false });
 
 		return stack;
 	}
@@ -156,7 +169,7 @@ export default function Board({ dimension }) {
 		<div className="board">
 			{grid.map((row, i) => {
 				return row.map((cell, j) => (
-					<Cell key={`${i}${j}`} number={cell} />
+					<Cell key={`${i}${j}`} cell={cell} />
 				));
 			})}
 		</div>
