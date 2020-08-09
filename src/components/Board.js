@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import "../styles/Board.scss";
 import Cell from "./Cell";
 
-export default function Board({ dimension }) {
+export default function Board({ dimension, score, setScore }) {
 	const [grid, setGrid] = useState(null);
 
 	let addRandomCell = useCallback((grid, newCell = false) => {
@@ -23,44 +23,56 @@ export default function Board({ dimension }) {
 	}, []);
 
 	const handleArrowUp = useCallback((grid) => {
+		let scoreAdded = 0;
 		for (let col = 0; col < grid.length; col++) {
 			let tmpColToSlide = [];
 			for (let row = 0; row < grid.length; row++) {
 				tmpColToSlide.push(grid[row][col]);
 			}
-			let colAfterSlide = slide(tmpColToSlide);
+			let { stack: colAfterSlide, addScore } = slide(tmpColToSlide);
 			for (let row = 0; row < grid.length; row++) {
 				grid[row][col] = colAfterSlide[row];
 			}
+			scoreAdded += addScore;
 		}
+		return scoreAdded;
 	}, []);
 
 	const handleArrowDown = useCallback((grid) => {
+		let scoreAdded = 0;
 		for (let col = 0; col < grid.length; col++) {
 			let tmpColToSlide = [];
 			for (let row = grid.length - 1; row >= 0; row--) {
 				tmpColToSlide.push(grid[row][col]);
 			}
-			let colAfterSlide = slide(tmpColToSlide);
+			let { stack: colAfterSlide, addScore } = slide(tmpColToSlide);
 
 			for (let row = 0; row < grid.length; row++) {
 				grid[grid.length - row - 1][col] = colAfterSlide[row];
 			}
+			scoreAdded += addScore;
 		}
+		return scoreAdded;
 	}, []);
 
 	const handleArrowLeft = useCallback((grid) => {
+		let scoreAdded = 0;
 		grid.forEach((row, i) => {
-			let rowAfterSlide = slide(row);
+			let { stack: rowAfterSlide, addScore } = slide(row);
 			grid[i] = rowAfterSlide;
+			scoreAdded += addScore;
 		});
+		return scoreAdded;
 	}, []);
 
 	const handleArrowRight = useCallback((grid) => {
+		let scoreAdded = 0;
 		grid.forEach((row, i) => {
-			let rowAfterSlide = slide(row.reverse()).reverse();
-			grid[i] = rowAfterSlide;
+			let { stack: rowAfterSlide, addScore } = slide(row.reverse());
+			grid[i] = rowAfterSlide.reverse();
+			scoreAdded += addScore;
 		});
+		return scoreAdded;
 	}, []);
 
 	const onKeyPress = useCallback(
@@ -83,27 +95,32 @@ export default function Board({ dimension }) {
 				});
 			});
 
+			let scoreToAdd = 0;
+
 			switch (key) {
 				case "ArrowUp":
-					handleArrowUp(newGrid);
+					scoreToAdd = handleArrowUp(newGrid);
 					break;
 				case "ArrowDown":
-					handleArrowDown(newGrid);
+					scoreToAdd = handleArrowDown(newGrid);
 					break;
 				case "ArrowLeft":
-					handleArrowLeft(newGrid);
+					scoreToAdd = handleArrowLeft(newGrid);
 					break;
 				case "ArrowRight":
-					handleArrowRight(newGrid);
+					scoreToAdd = handleArrowRight(newGrid);
 					break;
 				default:
 			}
 
 			addRandomCell(newGrid, true);
 			setGrid(newGrid);
+			setScore(score + scoreToAdd);
 		},
 		[
 			grid,
+			score,
+			setScore,
 			handleArrowDown,
 			handleArrowLeft,
 			handleArrowRight,
@@ -114,8 +131,8 @@ export default function Board({ dimension }) {
 
 	useEffect(() => {
 		let newGrid = [];
-		Array.from(Array(dimension)).forEach((r, i) => {
-			let row = Array.from(Array(dimension)).map((c, j) => {
+		Array.from(Array(dimension.row)).forEach((r, i) => {
+			let row = Array.from(Array(dimension.col)).map((c, j) => {
 				return { num: null, newCell: false };
 			});
 			newGrid.push(row);
@@ -139,6 +156,7 @@ export default function Board({ dimension }) {
 
 	function slide(arr) {
 		let stack = [];
+		let addScore = 0;
 
 		arr.forEach((cell) => {
 			if (cell.num === null) return;
@@ -147,10 +165,12 @@ export default function Board({ dimension }) {
 				stack.push({ ...cell });
 			} else {
 				if (stack[stack.length - 1].num === cell.num) {
+					let newNum = stack.pop().num + cell.num;
 					stack.push({
-						num: stack.pop().num + cell.num,
+						num: newNum,
 						newCell: false,
 					});
+					addScore += newNum;
 				} else {
 					stack.push({ ...cell });
 				}
@@ -160,7 +180,7 @@ export default function Board({ dimension }) {
 		while (stack.length < arr.length)
 			stack.push({ num: null, newCell: false });
 
-		return stack;
+		return { stack, addScore };
 	}
 
 	if (grid === null) return <div>Loading...</div>;

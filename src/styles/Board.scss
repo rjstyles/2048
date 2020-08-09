@@ -1,11 +1,5 @@
 @import "./variables";
 
-@mixin flexCenter($justify_content) {
-	display: flex;
-	justify-content: $justify_content;
-	align-content: space-evenly;
-}
-
 .board {
 	@include flexCenter(space-evenly);
 	border-radius: 5px;

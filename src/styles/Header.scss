@@ -1,0 +1,45 @@
+@import "./variables";
+
+.header {
+	@include flexCenter(space-around);
+	align-items: center;
+	margin-bottom: 100px;
+
+	.header__game_title {
+		font-size: 60px;
+		color: $text_color_2048;
+		font-weight: bold;
+	}
+
+	.header__game_info {
+		@include flexCenter(space-between);
+		align-items: center;
+
+		.header__score {
+			@include flexCenter(space-between);
+			border: none;
+			font-weight: bold;
+			background-color: $background_color;
+			border-radius: 5px;
+			padding: 5px 20px;
+			align-items: center;
+			align-content: center;
+			margin-right: 50px;
+
+			.header__score__text {
+				color: $text_color_score;
+				font-size: 13px;
+				margin-right: 20px;
+			}
+
+			.header__score__val {
+				color: white;
+				font-size: 30px;
+			}
+		}
+
+		.header__controls svg {
+			fill: $text_color_dark;
+		}
+	}
+}

@@ -16,6 +16,14 @@ $background_color_other: #3d3a32;
 
 $text_color_light: #f9f6f2;
 $text_color_dark: #766d64;
+$text_color_2048: #776e65;
+$text_color_score: #eee4da;
 
 $font_size_cell_large: 55px;
 $font_size_cell_small: 45px;
+
+@mixin flexCenter($justify_content) {
+	display: flex;
+	justify-content: $justify_content;
+	align-content: space-evenly;
+}
