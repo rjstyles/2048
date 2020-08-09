@@ -7,7 +7,6 @@ export default function Cell({ cell }) {
 	useEffect(() => {
 		if (cell && cell.newCell) {
 			let timer = setTimeout(() => {
-				console.log("new cell");
 				setNumber(cell.num);
 				setStyle(
 					cell && cell.num

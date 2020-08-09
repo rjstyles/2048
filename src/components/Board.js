@@ -29,9 +29,9 @@ export default function Board({ dimension, score, setScore }) {
 			for (let row = 0; row < grid.length; row++) {
 				tmpColToSlide.push(grid[row][col]);
 			}
-			let { stack: colAfterSlide, addScore } = slide(tmpColToSlide);
+			let { cellsAfterSlide, addScore } = slide(tmpColToSlide);
 			for (let row = 0; row < grid.length; row++) {
-				grid[row][col] = colAfterSlide[row];
+				grid[row][col] = cellsAfterSlide[row];
 			}
 			scoreAdded += addScore;
 		}
@@ -45,10 +45,10 @@ export default function Board({ dimension, score, setScore }) {
 			for (let row = grid.length - 1; row >= 0; row--) {
 				tmpColToSlide.push(grid[row][col]);
 			}
-			let { stack: colAfterSlide, addScore } = slide(tmpColToSlide);
+			let { cellsAfterSlide, addScore } = slide(tmpColToSlide);
 
 			for (let row = 0; row < grid.length; row++) {
-				grid[grid.length - row - 1][col] = colAfterSlide[row];
+				grid[grid.length - row - 1][col] = cellsAfterSlide[row];
 			}
 			scoreAdded += addScore;
 		}
@@ -58,8 +58,8 @@ export default function Board({ dimension, score, setScore }) {
 	const handleArrowLeft = useCallback((grid) => {
 		let scoreAdded = 0;
 		grid.forEach((row, i) => {
-			let { stack: rowAfterSlide, addScore } = slide(row);
-			grid[i] = rowAfterSlide;
+			let { cellsAfterSlide, addScore } = slide(row);
+			grid[i] = cellsAfterSlide;
 			scoreAdded += addScore;
 		});
 		return scoreAdded;
@@ -68,8 +68,8 @@ export default function Board({ dimension, score, setScore }) {
 	const handleArrowRight = useCallback((grid) => {
 		let scoreAdded = 0;
 		grid.forEach((row, i) => {
-			let { stack: rowAfterSlide, addScore } = slide(row.reverse());
-			grid[i] = rowAfterSlide.reverse();
+			let { cellsAfterSlide, addScore } = slide(row.reverse());
+			grid[i] = cellsAfterSlide.reverse();
 			scoreAdded += addScore;
 		});
 		return scoreAdded;
@@ -154,9 +154,46 @@ export default function Board({ dimension, score, setScore }) {
 		};
 	}, [onKeyPress]);
 
-	function slide(arr) {
-		let stack = [];
+	function slide(cellsToSlide) {
+		let cellsAfterSlide = [];
+		let prev = null;
 		let addScore = 0;
+
+		cellsToSlide.forEach((cell) => {
+			if (cell.num === null) return;
+			if (prev === null) {
+				prev = cell.num;
+			} else {
+				if (prev === cell.num) {
+					cellsAfterSlide.push({
+						num: prev + cell.num,
+						newCell: false,
+					});
+					addScore += prev + cell.num;
+					prev = null;
+				} else {
+					cellsAfterSlide.push({
+						num: prev,
+						newCell: false,
+					});
+					prev = cell.num;
+				}
+			}
+		});
+
+		if (prev) cellsAfterSlide.push({ num: prev, newCell: false });
+
+		while (cellsAfterSlide.length < cellsToSlide.length)
+			cellsAfterSlide.push({
+				num: null,
+				newCell: false,
+			});
+
+		return { cellsAfterSlide, addScore };
+	}
+
+	/* function slide(arr) {
+		let stack = [];
 
 		arr.forEach((cell) => {
 			if (cell.num === null) return;
@@ -181,7 +218,7 @@ export default function Board({ dimension, score, setScore }) {
 			stack.push({ num: null, newCell: false });
 
 		return { stack, addScore };
-	}
+	} */
 
 	if (grid === null) return <div>Loading...</div>;
 
