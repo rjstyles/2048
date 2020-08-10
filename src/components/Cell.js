@@ -26,5 +26,9 @@ export default function Cell({ cell }) {
 		}
 	}, [cell]);
 
-	return <div className={style}>{number}</div>;
+	return (
+		<div className={style}>
+			<div className="inner">{number}</div>
+		</div>
+	);
 }

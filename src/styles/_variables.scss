@@ -1,3 +1,4 @@
+$background_color_body: #faf8ef;
 $background_color: #bbad9f;
 $cell_color: #ccc1b3;
 
@@ -21,6 +22,7 @@ $text_color_score: #eee4da;
 
 $font_size_cell_large: 55px;
 $font_size_cell_small: 45px;
+$font_size_cell_smaller: 35px;
 
 @mixin flexCenter($justify_content) {
 	display: flex;

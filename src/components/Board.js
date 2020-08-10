@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 
 import "../styles/Board.scss";
-import Cell from "./Cell";
+import Row from "./Row";
 
 export default function Board({ dimension, score, setScore }) {
 	const [grid, setGrid] = useState(null);
@@ -192,42 +192,12 @@ export default function Board({ dimension, score, setScore }) {
 		return { cellsAfterSlide, addScore };
 	}
 
-	/* function slide(arr) {
-		let stack = [];
-
-		arr.forEach((cell) => {
-			if (cell.num === null) return;
-
-			if (stack.length === 0) {
-				stack.push({ ...cell });
-			} else {
-				if (stack[stack.length - 1].num === cell.num) {
-					let newNum = stack.pop().num + cell.num;
-					stack.push({
-						num: newNum,
-						newCell: false,
-					});
-					addScore += newNum;
-				} else {
-					stack.push({ ...cell });
-				}
-			}
-		});
-
-		while (stack.length < arr.length)
-			stack.push({ num: null, newCell: false });
-
-		return { stack, addScore };
-	} */
-
 	if (grid === null) return <div>Loading...</div>;
 
 	return (
 		<div className="board">
 			{grid.map((row, i) => {
-				return row.map((cell, j) => (
-					<Cell key={`${i}${j}`} cell={cell} />
-				));
+				return <Row key={i} row={row} />;
 			})}
 		</div>
 	);

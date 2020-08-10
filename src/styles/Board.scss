@@ -1,27 +1,45 @@
 @import "./variables";
 
 .board {
-	@include flexCenter(space-evenly);
-	border-radius: 5px;
-	flex-wrap: wrap;
-	width: 450px;
-	height: 450px;
-	background-color: $background_color;
+	margin: 0 auto;
+	width: 80vw;
+	max-width: 50vh;
+	height: 80vw;
+	max-height: 50vh;
+	background-color: $background_color_body;
+}
+
+.board__row {
+	display: flex;
 }
 
 .board__cell {
-	@include flexCenter(center);
 	font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+	font-size: $font_size_cell_large;
+	font-weight: bold;
+	background: $background_color;
+	margin: 2.5px;
 	color: $text_color_dark;
 	font-weight: bold;
-	line-height: 100px;
-	font-size: $font_size_cell_large;
-	width: 100px;
-	height: 100px;
-	border-radius: 5px;
+	flex: 1 0 auto;
+	position: relative;
+}
+
+.board__cell:after {
+	content: "";
+	float: left;
+	display: block;
+	padding-top: 100%;
+}
+.board__cell .inner {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	top: 0;
+	display: flex;
 	align-items: center;
-	background-color: $cell_color;
-	//margin: 10px 10px 0px 0px;
+	justify-content: center;
 }
 
 @keyframes newCellAnimation {
@@ -100,4 +118,17 @@
 	@extend .board__cell;
 	font-size: $font_size_cell_small;
 	background-color: $background_color_other;
+}
+
+@media only screen and (max-width: 500px) {
+	.board__cell {
+		font-size: $font_size_cell_small;
+	}
+
+	.board__cell--2048,
+	.board__cell--512,
+	.board__cell--256,
+	.board__cell--128 {
+		font-size: $font_size_cell_smaller;
+	}
 }
