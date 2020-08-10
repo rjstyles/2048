@@ -195,7 +195,7 @@ export default function Board({ dimension, score, setScore }) {
 	if (grid === null) return <div>Loading...</div>;
 
 	return (
-		<div className="board">
+		<div id="board" className="board">
 			{grid.map((row, i) => {
 				return <Row key={i} row={row} />;
 			})}
